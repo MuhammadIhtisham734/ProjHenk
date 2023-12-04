@@ -14,13 +14,15 @@ Data...
 - [x] Remove places sharing the same phone number.
   - e.g. 149 entries with the value of "1445980000000" in the Yelp dataset.
 - [ ] Replace special characters in phone numbers.
-  - Not sure if we need to do this?
+  - Not sure if  need to do this?
 - [ ] Fix NaN values in ratings.
 - [x] Trim restaurant names.
 - [x] Remove places with missing address parts, e.g. no street name
+- [ ] ...
 
 #### Zomato Dataset
 - [x] Trim restaurant names.
+- [ ] ...
 
 # Notes
 * Some places names are indeed simply their address in the yelp dataset. Weird.
