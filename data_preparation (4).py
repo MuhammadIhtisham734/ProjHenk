@@ -1,5 +1,5 @@
 import pandas as pd
-
+#
 # 1. Prepare data (apply necessary cleaning, feature encoding, transformations and features)
 
 df_yelp = pd.read_csv('restaurants1/yelp.csv', encoding='utf-8')
