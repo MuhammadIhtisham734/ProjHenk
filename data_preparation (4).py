@@ -50,11 +50,32 @@ def replace_special_chars(df):
     print('Fixed special characters.')
     return df_replaced
 
+# Fix places containing a '-' in their name only contain characters before the '-' sign as name value.
+
+
+def clean_title_with_hyphen(df):
+    df['NAME'] = df['NAME'].str.split('-').str[0]
+    print('Removed text after the first "-"')
+    return df
+
 
 # remove all non-numeric characters from phonenumbers (probably not required)
-def clean_phonenumber(df):
-    df['PHONENUMBER'] = df['PHONENUMBER'].str.replace(r'[\(\)\-\s]', '', regex=True)
-    print('Cleaned phone numbers.')
+def clean_phone_number(df):
+    def format_phone_numbers(phone):
+        cleaned_phone = ''.join(c for c in phone if c.isdigit())
+        if len(cleaned_phone) == 10:
+            return f"({cleaned_phone[:3]}) {cleaned_phone[3:6]}-{cleaned_phone[6:]}"
+        return cleaned_phone
+    df['PHONENUMBER'] = df['PHONENUMBER'].apply(format_phone_numbers)
+    return df
+
+
+# fix NAN values in ratings
+def fix_nan_in_ratings(df):
+    mean_rating = df['RATING'].mean()
+    df['RATING'] = df.apply(lambda row: 0 if row['NO_OF_REVIEWS'] == 0 else mean_rating if pd.isna(
+        row['RATING']) else row['RATING'], axis=1)
+    print("Fixed NaN values in the Rating column")
     return df
 
 
@@ -83,11 +104,14 @@ df_yelp_cleaned = trim_names(df_yelp_cleaned)
 df_yelp_cleaned = remove_duplicates(df_yelp_cleaned)
 df_yelp_cleaned = remove_reviews(df_yelp_cleaned)
 df_yelp_cleaned = replace_special_chars(df_yelp_cleaned)
+df_yelp_cleaned = clean_title_with_hyphen(df_yelp_cleaned)
+df_yelp_cleaned = clean_phone_number(df_yelp_cleaned)
 df_yelp_cleaned = remove_incorrect_phone_numbers(df_yelp_cleaned)
+df_yelp_cleaned = fix_nan_in_ratings(df_yelp_cleaned)
 df_yelp_cleaned = remove_incomplete_address(df_yelp_cleaned)
 
 print("Cleaning the Zomato dataset:")
 df_zomato_cleaned = trim_names(df_zomato_cleaned)
 
 df_yelp_cleaned.to_csv('restaurants1/yelp.cleaned.csv', encoding='utf-8')
-df_zomato_cleaned.to_csv('restaurants1/zomato.cleaned.csv', encoding='utf-8')
+# df_zomato_cleaned.to_csv('restaurants1/zomato.cleaned.csv', encoding='utf-8')
